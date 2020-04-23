@@ -1,73 +1,55 @@
 # Brick Layout for C++
 
-***Distributed Performance-portable Stencil Compuitation - [Documentation@bricks.run](https://bricks.run)***
+**Artifacts for SC20**
 
-## Requirements
+[Readme of Brick Library](README.old.md)
 
-* *C++14* compatible compiler
-* OpenMP
-* MPI library
-* CMake
-* **Optional** backends
-    * *CUDA*
-    * *OpenCL*
-    * *SYCL*
-    * *HIP* **WIP**
+## Organization
 
-## Building and running
-
-1. Clone the repository
-2. Create a build directory inside the source tree `mkdir build`
-3. Create build configuration `cd build && cmake .. -DCMAKE_BUILD_TYPE=Release`
-4. Build different test cases using `make <testname>`
-
-For description of the test cases see [here](docs/testcases.md).
-
-## Using the brick template
-
-The brick template consists of 3 part:
-
-* `Brick`: declare brick data structure
-* `BrickInfo`: an adjacency list that describes the relations between bricks
-* `BrickStorage`: a chunk of memory for storing bricks
-
-The behavior of such templated data structures are as normal: they do not require the use of code generator to function;
-provide a fallback way of writing code for compute & data movement.
-
-## Stencil Expression Description
-
-Stencil expression for code generator are specified using [Python library](docs/stencilExpr.md). Code generator provide 
-optimization and vectorization support for different backend.
-
-The code generation are carried out by CMake wrapper automatically. For details, see [Codegen Integration]().
-
-# Dimension Ordering
-
-Template arguments & code ordering is contiguous dimension last. Dimension arrays are contiguous at 0 (contiguous first).
-
-
-## Directory & Files
+The specific communication methods are implemented as library functions and used by the corresponding stencil test.
 
 * `include` and `src` contains the brick library headers and library files.
-* `docs` various documents
-* `cmake` CMake module file
-* Included test cases are split into 4 folders:
-    * `stencils` contains different stencils and related initialization code used by all tests as needed
-    * `single` for single node (no MPI)
+    * *Layout Optimization* is created with `BrickDecomp` from `include/bricks.run`
+    * *Memory mapping* is created from `BrickDecomp` with `BrickDecomp::exchangeView`
+* Included scaling test cases:
     * `weak` for weak scaling or strong scaling with one-level decomposition (one subdomain per rank)
     * `strong` for strong scaling with two-level decomposition (multiple fixed-sized subdomains per rank)
 
-A large portion of the brick library is entirely based on templates and can be included as a header only library.
+## Software dependencies
 
-## Acknowledgements
+* GCC supporting *C++11*, recommend:
+    * \>= 6.4.0
+* CUDA, recommend:
+    * \>= 10.0
+* MPI
+* Python 3.x
+* *Optional* Intel Compiler and Intel OpenMP library, recommend:
+    * \>= 2019
 
-* This research was supported by the Exascale Computing Project (17-SC-20-SC), a joint project of the U.S. Department of Energy's Office of Science and National Nuclear Security Administration.
-* This research used resources of the Oak Ridge Leadership Facility at the Oak Ridge National Laboratory, which is supported by the Office of Science of the U.S. Department of Energy under Contract No. DE-AC05-00OR22725.
-* This research used resources of the Argonne Leadership Computing Facility at Argonne National Laboratory, which is supported by the Office of Science of the U.S. Department of Energy under contract DE-AC02-06CH11357.
-* This research used resources in Lawrence Berkeley National Laboratory and the National Energy Research Scientific Computing Center, which are supported by the U.S. Department of Energy Office of Science’s Advanced Scientific Computing Research program under contract number DE-AC02-05CH11231.
+## How to Run
 
-## Publications
+1. `mkdir build && cd build`
+2. `cmake .. -DCMAKE_BUILD_TYPE=Release`
+3. `make <test>`
+4. run, for example, `weak-cpu`:
+    1. `cd weak`
+    2. `./cpu`
 
-@cite zhao2018 Zhao, Tuowen, Samuel Williams, Mary Hall, and Hans Johansen. "Delivering Performance-Portable Stencil Computations on CPUs and GPUs Using Bricks." In 2018 IEEE/ACM International Workshop on Performance, Portability and Productivity in HPC (P3HPC), pp. 59-70. IEEE, 2018. 
+Tests includes:
 
-@cite zhao2019 Zhao, Tuowen, Protonu Basu, Samuel Williams, Mary Hall, and Hans Johansen. "Exploiting reuse and vectorization in blocked stencil computations on CPUs and GPUs." In Proceedings of the International Conference for High Performance Computing, Networking, Storage and Analysis, p. 52. ACM, 2019.
+* CPU
+    * `weak-cpu`: `weak/cpu` One-level decomposition with MemMap
+    * `strong-cpu`: `strong/cpu` Two-level decomposition with MemMap
+* GPU
+    * `weak-cuda`: `weak/cuda` One-level decomposition with Layout optimization and CUDA-Aware MPI
+    * `weak-cuda-mmap`: `weak/cuda-mmap` One-level decomposition with MemMap
+    * `strong-cuda-mmap`: `strong/cuda-mmap` Two-level decomposition with MemMap
+
+Use `<test> -h` to list all parameters to the test.
+
+### Change Stencil
+
+Edit `stencils/fake.h`:[LN35](stencils/fake.h#L35) to
+
+* 7-point: *MPI_7PT*
+* 125-point: *MPI_125PT*

@@ -32,7 +32,7 @@ if (CUDA_AWARE)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCUDA_AWARE")
 endif()
 
-option(USE_TYPES "Use MPI_TYPES" OFF)
+option(USE_TYPES "Use MPI_TYPES" ON)
 if (USE_TYPES)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_TYPES")
 endif()
