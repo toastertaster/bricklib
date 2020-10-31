@@ -89,7 +89,7 @@ void d3pt7() {
   free(in_ptr);
   free(out_ptr);
   free(grid_ptr);
-  free(bStorage.dat);
+  delete [] &bStorage.dat;
   free(bInfo.adj);
 }
 
@@ -161,7 +161,7 @@ void d3cond() {
   free(in_ptr);
   free(out_ptr);
   free(grid_ptr);
-  free(bStorage.dat);
+  delete [] &bStorage.dat;
   free(bInfo.adj);
 }
 
@@ -246,6 +246,6 @@ void d3pt27() {
   free(in_ptr);
   free(out_ptr);
   free(grid_ptr);
-  free(bStorage.dat);
+  delete [] &bStorage.dat;
   free(bInfo.adj);
 }

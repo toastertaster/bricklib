@@ -70,6 +70,6 @@ void copy() {
   free(in_ptr);
   free(out_ptr);
   free(grid_ptr);
-  free(bStorage.dat);
+  delete [] &bStorage.dat;
   free(bInfo.adj);
 }
